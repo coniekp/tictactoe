@@ -1,76 +1,119 @@
-document.addEventListener("DOMContentLoaded", (event) =>{
-  
-  var board = [['','',''],['','',''],['','','']];
-  var selectedSquare;
-  var currentSign = 'X';
-  var gameover = false;  
-  reset = () => {
-    window.location.reload();
-  }
-  handleClick = (e) =>{
-    if(!gameover){
-      var squareId = e.srcElement.id;
-      changeSignInSquare(squareId);
-      checkBoardForWin(currentSign);
+var states = {
+  board: [['','',''],['','',''],['','','']],
+  selectedSquare: null,
+  currentSign: 'X',
+  gameover: false
+};
+
+var utils = { 
+ 
+  handleClick: (e) => {
+    if(!states.gameover){
+      utils.updateBoard(e.srcElement.id);
+      utils.checkBoardForWin(states.currentSign);
     }
-  };
+  },
   
-  changeSignInSquare = (id) => {
+  updateBoard: (id) => {
+    view.clearMessage();
+    
     var row = parseInt(id[0]);
     var col = parseInt(id[1]);
 
-    if (!board[row][col]){
-      board[row][col] = currentSign;
-      renderSign (id, currentSign);
+    if (!states.board[row][col]){
+      states.board[row][col] = states.currentSign;
+      view.renderMove (id, states.currentSign);
     } else {
-      return alert("Invalid Move. Try again!");
+      view.renderWarning();
     }
-  };
+  },
   
-  renderSign = (id, sign) => {
-    document.getElementById(id).innerText = sign;
-  };
-  
-  checkBoardForWin = (sign) => {
-    if (find3inRow(sign) || find3inColumn(sign) || find3inDiagonal(sign)) {
-      handleEndGame (currentSign);
+  checkBoardForWin: (sign) => {
+    var hasWinningCombo = utils.find3InARow.some((finder) => finder(sign));
+    if (hasWinningCombo) {
+      utils.handleEndGame (states.currentSign);
     } else {
-      currentSign = currentSign === 'X'? 'O' : 'X';
+      states.currentSign = states.currentSign === 'X'? 'O' : 'X';
     }
+  },
+  
+  find3InARow: [
     
-  };
-  
-  find3inRow = (sign) => {
-    return board.some((row) => {
-      return row.every ((square) => {
-        return square === sign;
+    findInRow = (sign) => {
+      return states.board.some((row) => {
+        return row.every ((square) => {
+          return square === sign;
+        });
       });
-    });
-  };
-  
-  find3inColumn = (sign) => {
-    return board[0].some((val, index) => {
-      return val === sign && board[1][index] === sign && board[2][index] === sign; 
-    });
-  };
-  
-  find3inDiagonal = (sign) => {
-    var majorDiagonalWin = board.every((row, index) => {
-      return row[index] === sign;
-    });
+    },
     
-    var minorDiagonalWin = board.every((row, index) => {
-      return row[2-index] === sign;
-    });
+    findInColumn = (sign) => {
+      return states.board[0].some((val, index) => {
+        return val === sign && states.board[1][index] === sign && states.board[2][index] === sign; 
+      });
+    },
     
-    return majorDiagonalWin || minorDiagonalWin;
-  };
+    findInDiagonals = (sign) => {
+      var majorDiagonalWin = states.board.every((row, index) => {
+        return row[index] === sign;
+      });
+    
+      var minorDiagonalWin = states.board.every((row, index) => {
+        return row[2-index] === sign;
+      });
+    
+      return majorDiagonalWin || minorDiagonalWin;
+    }
+  ], 
   
-  handleEndGame = (sign) => {
+  handleEndGame: (sign) => {
+    states.gameover = true;
+    view.renderGameEndMessage(sign);
+  }
+};
+
+var view = {
+  reset: () => window.location.reload(),
+  renderSquare: (rowIndex, colIndex) => {
+      var el = document.createElement('div');
+      el.setAttribute('class', 'square');
+      el.setAttribute('id', '' + rowIndex + colIndex);
+      el.addEventListener('click', utils.handleClick);
+      return el;
+  },
+  renderRow: (rowIndex) => {
+    var el =  document.createElement('div');
+    el.setAttribute('class', 'row');
+    for (var i = 0; i < 3; i++){
+      var squareEl = view.renderSquare(rowIndex, i);
+      el.appendChild(squareEl);
+    };
+    return el;
+  },
+  renderBoard: (boardEl) => {
+    for (var i = 0; i < 3; i++) {
+      var rowEl = view.renderRow(i);
+      boardEl.appendChild(rowEl);
+    }
+    return boardEl;
+  },
+  renderMove: (squareId, sign) => {
+    document.getElementById(squareId).innerText = sign;
+  },
+  renderWarning: () => {
+    document.getElementById('message').innerText = 'Invalid Move.Try again';
+  },
+  renderGameEndMessage: (sign) => {
     document.getElementById('message').innerText = sign + ' WINS!';
-    gameover = true;
-  };
+  },
+  clearMessage: ()=>{
+    document.getElementById('message').innerText = ''; 
+  }
+};
+
+document.addEventListener("DOMContentLoaded", (event) => {
   
-  
-  
+  var boardEl = document.getElementById('board');
+  view.renderBoard(boardEl);
+
 });
