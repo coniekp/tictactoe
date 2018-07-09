@@ -6,27 +6,29 @@
   <style>
   .board {display:flex; flex-direction: column;}
   .row {display: flex; justify-content: center; }
-  .square {border: 1px solid black; display: flex; width: 100%; justify-content:center;}
+  .square {border: 1px solid black; display: flex; min-width: 100px; min-height: 100px; justify-content:center}
   </style>
 </head>
 <body>
   <h1>TIC-TAC-TOE</h1>
   <div  id="board">
     <div class="row r0">
-      <div class="square" id="00" onclick="return handleClick(event)">_</div>
-      <div class="square" id="01" onclick="return handleClick(event)">_</div>
-      <div class="square" id="02" onclick="return handleClick(event)">_</div>
+      <div class="square" id="00" onclick="return handleClick(event)"></div>
+      <div class="square" id="01" onclick="return handleClick(event)"></div>
+      <div class="square" id="02" onclick="return handleClick(event)"></div>
     </div>
     <div class="row r1">
-      <div class="square" id="10" onclick="return handleClick(event)">_</div>
-      <div class="square" id="11" onclick="return handleClick(event)">_</div>
-      <div class="square" id="12" onclick="return handleClick(event)">_</div>
+      <div class="square" id="10" onclick="return handleClick(event)"></div>
+      <div class="square" id="11" onclick="return handleClick(event)"></div>
+      <div class="square" id="12" onclick="return handleClick(event)"></div>
     </div>
     <div class="row r2">
-      <div class="square" id="20" onclick="return handleClick(event)">_</div>
-      <div class="square" id="21" onclick="return handleClick(event)">_</div>
-      <div class="square" id="22" onclick="return handleClick(event)">_</div>
+      <div class="square" id="20" onclick="return handleClick(event)"></div>
+      <div class="square" id="21" onclick="return handleClick(event)"></div>
+      <div class="square" id="22" onclick="return handleClick(event)"></div>
     </div>
+    <h5 id="message"></h5>
+    <button onclick="reset()">NEW GAME</button>
   </div>
   
 </body> 
