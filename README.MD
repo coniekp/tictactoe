@@ -1,6 +1,6 @@
-#MINI APP 1: TIC TAC TOE
+# MINI APP 1: TIC TAC TOE
 
-##Progess: 
+## Progess: 
 
 * Minimum Requirements completed 
 
