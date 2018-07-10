@@ -10,11 +10,10 @@ var utils = {
   handleClick: (e) => {
     if(!states.gameover){
       utils.updateBoard(e.srcElement.id);
-      utils.checkBoardForWin(states.currentSign);
     }
   },
   
-  updateBoard: (id) => {
+  updateBoard: (id, cb) => {
     view.clearMessage();
     
     var row = parseInt(id[0]);
@@ -23,6 +22,7 @@ var utils = {
     if (!states.board[row][col]){
       states.board[row][col] = states.currentSign;
       view.renderMove (id, states.currentSign);
+      utils.checkBoardForWin(states.currentSign);
     } else {
       view.renderWarning();
     }
@@ -34,6 +34,7 @@ var utils = {
       utils.handleEndGame (states.currentSign);
     } else {
       states.currentSign = states.currentSign === 'X'? 'O' : 'X';
+      utils.rotateBoard();
     }
   },
   
@@ -98,16 +99,27 @@ var view = {
     return boardEl;
   },
   renderMove: (squareId, sign) => {
-    document.getElementById(squareId).innerText = sign;
+    var color = sign === 'X'? '#ed6749' : '#49c9ed';
+    var squareEl = document.getElementById(squareId)
+    squareEl.innerText = sign;
+    squareEl.style.color = color;
+  },
+  setMessageBoxStyle: (visibility, text, color) =>{
+    var messageBox = document.getElementById('message');
+    messageBox.innerText = text;
+    messageBox.style.background = color;
+    messageBox.style.visibility = visibility;
   },
   renderWarning: () => {
-    document.getElementById('message').innerText = 'Invalid Move.Try again';
+    var text = `- INVALID MOVE -\nTRY AGAIN!`;
+    view.setMessageBoxStyle('visible', text, '#ed806d');
   },
   renderGameEndMessage: (sign) => {
-    document.getElementById('message').innerText = sign + ' WINS!';
+    var text = sign + ' WINS!';
+    view.setMessageBoxStyle('visible', text, '#ffce1e');
   },
   clearMessage: ()=>{
-    document.getElementById('message').innerText = ''; 
+    view.setMessageBoxStyle('hidden', '', 'white');
   }
 };
 
