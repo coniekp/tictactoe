@@ -34,21 +34,23 @@ var utils = {
   },
   
   updateBoard: (id, cb) => {
-    view.clearMessage();
+    //view.clearMessage();
     
     var row = parseInt(id[0]);
     var col = parseInt(id[1]);
 
     if (!states.board[row][col]){
       states.board[row][col] = states.currentSign;
-      view.renderMove (id, states.currentSign);
-      if(states.gravityEnabled){
-        setTimeout(utils.addLeftGravity, 500);
+      view.renderMove (id, states.currentSign); //1. show the player new move
+      
+      if(states.gravityEnabled){                //2. if left gravity is enabled, shift the signs left 
+        setTimeout(utils.addLeftGravity, 200);
       }
-      if (states.rotationEnabled){
-        setTimeout(utils.rotateBoard, 1000);
+      
+      if (states.rotationEnabled){            //3. if rotation is enabled, shift the signs left 
+        setTimeout(utils.rotateBoard, 600);
       }
-      setTimeout(utils.checkBoardForWin, 1500);
+      setTimeout(utils.checkBoardForWin, 650); //4. check for wins after effects have been applied
     } else {
       view.renderWarning();
     }
@@ -61,6 +63,7 @@ var utils = {
       utils.handleEndGame (states.currentSign);
     } else {
       states.currentSign = states.currentSign === 'X'? 'O' : 'X';
+      view.signalTurn();
     }
   },
   
@@ -159,22 +162,29 @@ var view = {
     squareEl.innerText = sign;
     squareEl.style.color = color;
   },
-  setMessageBoxStyle: (visibility, text, color) =>{
+  setMessageBoxStyle: (textColor, text, backgroundColor) =>{
     var messageBox = document.getElementById('message');
     messageBox.innerText = text;
-    messageBox.style.background = color;
-    messageBox.style.visibility = visibility;
+    messageBox.style.background = backgroundColor;
+    messageBox.style.color = textColor;
   },
   renderWarning: () => {
     var text = `- INVALID MOVE -\nTRY AGAIN!`;
-    view.setMessageBoxStyle('visible', text, '#ed806d');
+    view.setMessageBoxStyle('#fff', text, '#ed806d');
+  },
+  signalTurn: () => {
+    if (states.currentSign === 'X') {
+      view.setMessageBoxStyle('#ed6749', 'PLAYER 1 GO!', '#fff');
+    } else {
+      view.setMessageBoxStyle('#49c9ed', 'PLAYER 2 GO!', '#fff');
+    }
   },
   renderGameEndMessage: (sign) => {
     var text = sign + ' WINS!';
-    view.setMessageBoxStyle('visible', text, '#ffce1e');
+    view.setMessageBoxStyle('#fff', text, '#ffce1e');
   },
   clearMessage: ()=>{
-    view.setMessageBoxStyle('hidden', '', 'white');
+    view.setMessageBoxStyle('#fff', '', 'white');
   },
   renderGravityMode: ()=>{
     var buttonEl = document.getElementById('gravity-button');
