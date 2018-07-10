@@ -18,7 +18,7 @@ h1 {
 }
 
 button {
-  margin: 50px;
+  margin: 20px;
   padding: 10px;
   width: 300px;
   border: 2px solid white;
@@ -26,6 +26,10 @@ button {
   background: #47b8c6;
   color: white;
   font-weight: bold;
+}
+
+#gravity-button, #rotation-button {
+  background: #ccced1;
 }
 
 .row {

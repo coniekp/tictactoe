@@ -2,7 +2,9 @@ var states = {
   board: [['','',''],['','',''],['','','']],
   selectedSquare: null,
   currentSign: 'X',
-  gameover: false
+  gameover: false,
+  gravityEnabled: false,
+  rotationEnabled: false,
 };
 
 var utils = { 
@@ -10,6 +12,24 @@ var utils = {
   handleClick: (e) => {
     if(!states.gameover){
       utils.updateBoard(e.srcElement.id);
+    }
+  },
+  
+  toggleGravity: () => {
+    states.gravityEnabled = !states.gravityEnabled;
+    if (states.gravityEnabled) {
+      view.renderGravityMode();
+    } else {
+      view.renderNoGravityMode();
+    }
+  },  
+  
+  toggleRotation: () => {
+    states.rotationEnabled = !states.rotationEnabled;
+    if (states.rotationEnabled) {
+      view.renderRotationMode();
+    } else {
+      view.renderNoRotationMode();
     }
   },
   
@@ -22,19 +42,25 @@ var utils = {
     if (!states.board[row][col]){
       states.board[row][col] = states.currentSign;
       view.renderMove (id, states.currentSign);
-      utils.checkBoardForWin(states.currentSign);
+      if(states.gravityEnabled){
+        setTimeout(utils.addLeftGravity, 500);
+      }
+      if (states.rotationEnabled){
+        setTimeout(utils.rotateBoard, 1000);
+      }
+      setTimeout(utils.checkBoardForWin, 1500);
     } else {
       view.renderWarning();
     }
   },
   
-  checkBoardForWin: (sign) => {
+  checkBoardForWin: () => {  
+    var sign = states.currentSign;
     var hasWinningCombo = utils.find3InARow.some((finder) => finder(sign));
     if (hasWinningCombo) {
       utils.handleEndGame (states.currentSign);
     } else {
       states.currentSign = states.currentSign === 'X'? 'O' : 'X';
-      utils.rotateBoard();
     }
   },
   
@@ -67,6 +93,30 @@ var utils = {
     }
   ], 
   
+  rotateBoard: () => {
+    var newBoard = [];
+    states.board.forEach((row, i) => {
+      var newColumn = [];
+      row.forEach((square, j) => {
+        newColumn.push(states.board[j][2-i]);
+      });
+      newBoard.push(newColumn);
+    });
+    states.board = newBoard;
+    view.renderBoard();
+  },
+  
+  addLeftGravity: () => {
+    states.board = states.board.map((row, i) => {
+      var newRow = row.join('').split('');
+      while (newRow.length < 3) {
+        newRow.push('');
+      }
+      return newRow;
+    });
+    view.renderBoard();
+  },
+  
   handleEndGame: (sign) => {
     states.gameover = true;
     view.renderGameEndMessage(sign);
@@ -76,10 +126,13 @@ var utils = {
 var view = {
   reset: () => window.location.reload(),
   renderSquare: (rowIndex, colIndex) => {
+      var sign = states.board[rowIndex][colIndex];
       var el = document.createElement('div');
       el.setAttribute('class', 'square');
       el.setAttribute('id', '' + rowIndex + colIndex);
       el.addEventListener('click', utils.handleClick);
+      el.innerText = sign;
+      el.style.color = sign === 'X'? '#ed6749' : '#49c9ed';
       return el;
   },
   renderRow: (rowIndex) => {
@@ -91,7 +144,9 @@ var view = {
     };
     return el;
   },
-  renderBoard: (boardEl) => {
+  renderBoard: () => {
+    var boardEl = document.getElementById('board');
+    boardEl.innerHTML = ''; 
     for (var i = 0; i < 3; i++) {
       var rowEl = view.renderRow(i);
       boardEl.appendChild(rowEl);
@@ -120,12 +175,27 @@ var view = {
   },
   clearMessage: ()=>{
     view.setMessageBoxStyle('hidden', '', 'white');
+  },
+  renderGravityMode: ()=>{
+    var buttonEl = document.getElementById('gravity-button');
+    buttonEl.style.background = '#112544';
+  },
+  renderNoGravityMode: ()=>{
+    var buttonEl = document.getElementById('gravity-button');
+    buttonEl.style.background = '#ccced1';
+  },
+  renderRotationMode: ()=>{
+    var buttonEl = document.getElementById('rotation-button');
+    buttonEl.style.background = '#112544';
+  },
+  renderNoRotationMode: ()=>{
+    var buttonEl = document.getElementById('rotation-button');
+    buttonEl.style.background = '#ccced1';
   }
 };
 
 document.addEventListener("DOMContentLoaded", (event) => {
   
-  var boardEl = document.getElementById('board');
-  view.renderBoard(boardEl);
+  view.renderBoard();
 
 });
