@@ -13,7 +13,6 @@
   * Rotation mode: when enabled, board rotates counter clockwise by 90 degrees
   * Gravity mode: when enabled, board eliminates empty squares and shifts all occupied squares LEFT
   * Rotation and Gravity can be enabled together or separately. When used together, the effect is equivalent to rotating, then adding downward gravity
-
-* Unfinished features
-
   * Express server
+
+![demo](https://github.com/coniekp/tictactoe/blob/master/demo.png)
