@@ -48,9 +48,9 @@ var utils = {
       }
       
       if (states.rotationEnabled){            //3. if rotation is enabled, shift the signs left 
-        setTimeout(utils.rotateBoard, 600);
+        setTimeout(utils.rotateBoard, 500);
       }
-      setTimeout(utils.checkBoardForWin, 650); //4. check for wins after effects have been applied
+      setTimeout(utils.checkBoardForWin, 510); //4. check for wins after effects have been applied
     } else {
       view.renderWarning();
     }
@@ -180,8 +180,8 @@ var view = {
     }
   },
   renderGameEndMessage: (sign) => {
-    var text = sign + ' WINS!';
-    view.setMessageBoxStyle('#fff', text, '#ffce1e');
+    var player = sign === 'X'? 'PLAYER 1 ': 'PLAYER 2 ';
+    view.setMessageBoxStyle('#fff', player + 'WINS!', '#ffce1e');
   },
   clearMessage: ()=>{
     view.setMessageBoxStyle('#fff', '', 'white');
